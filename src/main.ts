@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import cors from 'cors';
+import { userRouter } from "./routes/user.routes";
 export class Main{
     private app = express();
     constructor(){
@@ -21,7 +22,7 @@ export class Main{
 
     }
     private routes(){
-
+        this.app.use("/api/v1/users", userRouter );
     }
     public startServer(port: number | string){
         this.app.listen(port, () => console.log(`Server is running on port ${port}`));

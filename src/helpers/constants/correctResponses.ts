@@ -1,0 +1,1 @@
+export const POST_MESSAGE = "Registro insertado correctamente";
