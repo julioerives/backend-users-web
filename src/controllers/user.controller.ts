@@ -7,6 +7,7 @@ import { DEFAULT_ERROR_RESPONSE } from "../helpers/constants/errorResponse";
 import { getConnection } from "../database/database";
 import { PoolConnection } from "mysql2/promise";
 import { addUser } from "../services/user.service";
+import { ZodError } from "zod";
 
 export const insertUser = async (req:Request, res: Response) => {
     let connection!:PoolConnection;
@@ -17,6 +18,10 @@ export const insertUser = async (req:Request, res: Response) => {
         res.status(201).json(correctResponse<User>(POST_MESSAGE,user));
     } catch (error:any) {
         console.log("🚀 ~ insertUser ~ error:", error)
+        if(error instanceof ZodError){
+            res.status(400).json(errorResponse(error.message))
+            return
+        }
         res.status(500).json(errorResponse(DEFAULT_ERROR_RESPONSE));
     }finally{
         connection?.release()
