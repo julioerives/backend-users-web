@@ -1,14 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import cors from 'cors';
-import { config } from "dotenv";
-config()
 export class Main{
     private app = express();
     constructor(){
         this.middelwares();
         this.routes();
-        this.startServer(process.env.PORT || 3000);
     }
     private middelwares(){
         this.app.use(morgan('dev'))
