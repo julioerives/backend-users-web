@@ -26,7 +26,7 @@ export const logInController = async(req:Request,res:Response):Promise<any>=>{
         }
         res.status(200).json(correctResponse("Autenticación exitosa",dataToReturn))
     }catch(e){
-        console.log("��� ~ logInController ~ error:", e)
+        console.log("🚀 ~ logInController ~ e:", e)
         if(e instanceof ZodError){
             return res.status(400).json(errorResponse(e.message))
         }else if( e instanceof ResourceNotFound){
