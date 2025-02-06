@@ -22,7 +22,7 @@ export const logInController = async (req: Request, res: Response): Promise<any>
         userLogInSchema.parse(user)
         const result = await logInService(user, connection)
         const token: string = `Bearer ${accessToken<User>(user)}`;
-        addCookie<string>('token', token,res);
+        addCookie<string>('token', token, res);
         res.status(200).json(correctResponse<User>("Autenticación exitosa", result))
     } catch (e) {
         console.log("🚀 ~ logInController ~ e:", e)
