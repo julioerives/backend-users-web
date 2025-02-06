@@ -20,11 +20,9 @@ export const logInController = async(req:Request,res:Response):Promise<any>=>{
         const user:User = req.body;
         userLogInSchema.parse(user)
         const result = await logInService(user,connection)
-        const dataToReturn = {
-            ...result,
-            token: accessToken<User>(user),
-        }
-        res.status(200).json(correctResponse("Autenticación exitosa",dataToReturn))
+        const token:string = `Bearer ${accessToken<User>(user)}`;
+        res.cookie("token",token,{maxAge:36000000, httpOnly:true})
+        res.status(200).json(correctResponse<User>("Autenticación exitosa",result))
     }catch(e){
         console.log("🚀 ~ logInController ~ e:", e)
         if(e instanceof ZodError){

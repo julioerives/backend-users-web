@@ -4,6 +4,7 @@ import cors from 'cors';
 import { userRouter } from "./routes/user.routes";
 import { validateToken } from "./helpers/JWT/validateToken";
 import { authRouter } from "./routes/auth.routes";
+import cookieParser from "cookie-parser";
 export class Main {
     private app = express();
     constructor() {
@@ -11,6 +12,7 @@ export class Main {
         this.routes();
     }
     private middelwares() {
+        this.app.use(cookieParser())
         this.app.use(morgan('dev'))
         this.app.use(express.json());
         this.app.use(cors());
