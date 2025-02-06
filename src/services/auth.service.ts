@@ -5,14 +5,14 @@ import { ResourceNotFound } from "../exceptions/resourceNotFoundException";
 import { USER_NOT_EXISTS } from "../helpers/constants/errorResponse";
 import { PasswordMismatchError } from "../exceptions/passwordMismatchException";
 
-export const logInService = async (user:User,connection:PoolConnection):Promise<User>=>{
-    const [result]:any = await connection.query("SELECT id_user,email,name,password FROM users WHERE email = ?", [user.email]);
-    if(!result){
+export const logInService = async (user: User, connection: PoolConnection): Promise<User> => {
+    const [result]: any = await connection.query("SELECT id_user,email,name,password FROM users WHERE email = ?", [user.email]);
+    if (!result) {
         throw new ResourceNotFound(USER_NOT_EXISTS)
     }
     const hashedPassword = result[0].password;
     const match = await bcrypt.compare(user.password, hashedPassword);
-    if(!match){
+    if (!match) {
         throw new PasswordMismatchError(USER_NOT_EXISTS)
     }
     return {

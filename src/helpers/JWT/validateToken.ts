@@ -6,7 +6,7 @@ import { MISSING_TOKEN } from "../constants/errorResponse";
 import { Request, Response } from "express";
 
 config();
-export function validateToken(req: Request, res: Response,next:any){
+export function validateToken(req: Request, res: Response, next: any) {
     if (ROUTES_NOT_PROTECTED.includes(req.path)) {
         return next();
     }
@@ -14,12 +14,12 @@ export function validateToken(req: Request, res: Response,next:any){
     if (!process.env.JWT_KEY) {
         throw new Error('Secret key is not defined in environment variables');
     }
-    if(!accessToken){
+    if (!accessToken) {
         res.status(401).json(errorResponse(MISSING_TOKEN))
         return
     }
     const token = accessToken.split(' ')[1];
-    jwt.verify(token,process.env.JWT_KEY,(err:any,user:any)=>{
+    jwt.verify(token, process.env.JWT_KEY, (err: any, user: any) => {
         next();
     })
 }
