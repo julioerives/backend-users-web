@@ -1,1 +1,1 @@
-export const ROUTES_NOT_PROTECTED=['/api/v1/auth/login','/api/v1/auth/register']
+export const ROUTES_NOT_PROTECTED = ['/api/v1/auth/login', '/api/v1/auth/register']
