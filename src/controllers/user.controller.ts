@@ -9,22 +9,22 @@ import { PoolConnection } from "mysql2/promise";
 import { addUser } from "../services/user.service";
 import { ZodError } from "zod";
 import { userSchema } from "../schemas/user.schema";
-export const insertUser = async (req:Request, res: Response) => {
-    let connection!:PoolConnection;
+export const insertUser = async (req: Request, res: Response) => {
+    let connection!: PoolConnection;
     try {
         connection = await getConnection();
-        const user:User = req.body;
+        const user: User = req.body;
         userSchema.parse(user);
-        await addUser(user,connection)
-        res.status(201).json(correctResponse<User>(POST_MESSAGE,user));
-    } catch (error:any) {
+        await addUser(user, connection)
+        res.status(201).json(correctResponse<User>(POST_MESSAGE, user));
+    } catch (error: any) {
         console.log("🚀 ~ insertUser ~ error:", error)
-        if(error instanceof ZodError){
+        if (error instanceof ZodError) {
             res.status(400).json(errorResponse(error.message))
             return
         }
         res.status(500).json(errorResponse(DEFAULT_ERROR_RESPONSE));
-    }finally{
+    } finally {
         connection?.release()
     }
 }

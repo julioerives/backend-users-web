@@ -1,5 +1,5 @@
-export interface Response<T>{
+export interface Response<T> {
     message: string;
-    error:boolean;
-    data:T;
+    error: boolean;
+    data: T;
 }

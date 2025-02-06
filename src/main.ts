@@ -2,13 +2,13 @@ import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import cors from 'cors';
 import { userRouter } from "./routes/user.routes";
-export class Main{
+export class Main {
     private app = express();
-    constructor(){
+    constructor() {
         this.middelwares();
         this.routes();
     }
-    private middelwares(){
+    private middelwares() {
         this.app.use(morgan('dev'))
         this.app.use(express.json());
         this.app.use(cors());
@@ -21,10 +21,10 @@ export class Main{
         });
 
     }
-    private routes(){
-        this.app.use("/api/v1/users", userRouter );
+    private routes() {
+        this.app.use("/api/v1/users", userRouter);
     }
-    public startServer(port: number | string){
+    public startServer(port: number | string) {
         this.app.listen(port, () => console.log(`Server is running on port ${port}`));
     }
 }
