@@ -12,6 +12,7 @@ import { ZodError } from "zod";
 import { logInService } from "../services/auth.service";
 import { correctResponse } from "../helpers/responses/correctResponse";
 import { accessToken } from "../helpers/JWT/accessToken";
+import { addCookie } from "../helpers/cookies";
 
 export const logInController = async (req: Request, res: Response): Promise<any> => {
     let connection!: PoolConnection;
@@ -21,7 +22,7 @@ export const logInController = async (req: Request, res: Response): Promise<any>
         userLogInSchema.parse(user)
         const result = await logInService(user, connection)
         const token: string = `Bearer ${accessToken<User>(user)}`;
-        res.cookie("token", token, { maxAge: 36000000, httpOnly: true })
+        addCookie<string>('token', token,res);
         res.status(200).json(correctResponse<User>("Autenticación exitosa", result))
     } catch (e) {
         console.log("🚀 ~ logInController ~ e:", e)
