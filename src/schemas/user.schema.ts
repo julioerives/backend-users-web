@@ -15,3 +15,12 @@ export const userSchema = z.object({
     }),
 
 })
+export const userLogInSchema = z.object({
+    email: z.string().email({
+        message: "EL correo debe de ser un correo valido",
+    }),
+    password: z.string({
+        required_error: "El campo contraseña es requerido",
+        invalid_type_error: "El campo contraseña tiene que ser una cadena"
+    })
+})
