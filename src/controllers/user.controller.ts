@@ -8,13 +8,14 @@ import { getConnection } from "../database/database";
 import { PoolConnection } from "mysql2/promise";
 import { addUser } from "../services/user.service";
 import { ZodError } from "zod";
-
+import { userSchema } from "../schemas/user.schema";
 export const insertUser = async (req:Request, res: Response) => {
     let connection!:PoolConnection;
     try {
         connection = await getConnection();
         const user:User = req.body;
-        const result = await addUser(user,connection)
+        userSchema.parse(user);
+        await addUser(user,connection)
         res.status(201).json(correctResponse<User>(POST_MESSAGE,user));
     } catch (error:any) {
         console.log("🚀 ~ insertUser ~ error:", error)
