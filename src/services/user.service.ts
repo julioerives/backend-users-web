@@ -8,3 +8,8 @@ export const addUser = async (user: User, connection: PoolConnection) => {
     const [result] = await connection.query("INSERT INTO users(name,email,password) values(?,?,?)", [user.name, user.email, user.password]);
     return result;
 }
+
+export const getUsers = async (connection: PoolConnection) => {
+    const [result] = await connection.query("SELECT * FROM users");
+    return result;
+}
