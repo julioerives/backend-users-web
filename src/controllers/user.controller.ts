@@ -1,10 +1,9 @@
 import { Request, Response } from "express"
 import { User } from "../models/user.model";
 import { correctResponse } from "../helpers/responses/correctResponse";
-import { correctGetUser } from "../helpers/responses/correctGet";
 import { GET_MESSAGE, POST_MESSAGE } from "../helpers/constants/correctResponses";
 import { errorResponse } from "../helpers/responses/errorResponse";
-import { DEFAULT_ERROR_RESPONSE } from "../helpers/constants/errorResponse";
+import { DATA_NOT_FOUND, DEFAULT_ERROR_RESPONSE } from "../helpers/constants/errorResponse";
 import { getConnection } from "../database/database";
 import { PoolConnection } from "mysql2/promise";
 import { addUser, getUsers } from "../services/user.service";
@@ -36,8 +35,12 @@ export const getUser = async (req: Request, res: Response) => {
 
     try {
         connection = await getConnection();
-        let users = await getUsers(connection)
-        res.status(201).json(correctGetUser(GET_MESSAGE, users));
+        let users = await getUsers(connection) as User[]
+        if(users.length < 0) {
+            res.status(404).json(errorResponse(DATA_NOT_FOUND));
+            return;
+        }
+        res.status(201).json(correctResponse<User[]>(GET_MESSAGE, users));
     } catch (error: any) {
         console.log("🚀 ~ getUser ~ error:", error)
         if (error instanceof ZodError) {

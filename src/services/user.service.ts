@@ -10,6 +10,16 @@ export const addUser = async (user: User, connection: PoolConnection) => {
 }
 
 export const getUsers = async (connection: PoolConnection) => {
-    const [result] = await connection.query("SELECT * FROM users");
+    const query:string =`
+    SELECT
+        id_user,
+        name,
+        email,
+        active,
+        DATE_FORMAT(createdAt, '%Y-%m-%d') AS createdAt,
+        DATE_FORMAT(updatedAt, '%Y-%m-%d') AS updatedAt
+    FROM users
+    `
+    const [result] = await connection.query(query);
     return result;
 }
