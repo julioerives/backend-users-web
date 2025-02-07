@@ -1,9 +1,15 @@
 import { PoolConnection } from "mysql2/promise";
 import { User } from "../models/user.model";
 import bcrypt from "bcrypt"
+import { ResourceExistsException } from "../exceptions/ResourceExistsException";
+import { EMAIL_EXISTS } from "../helpers/constants/errorResponse";
 
 export const addUserService = async (user: User, connection: PoolConnection) => {
-    console.log("🚀 ~ addUserService ~ user:", user)
+    const [email] = await connection.query("SELECT email FROM users WHERE email = ?", [user.email])
+    console.log("🚀 ~ addUserService ~ email:", email)
+    if (email) {
+        throw new ResourceExistsException(EMAIL_EXISTS)
+    }
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(String(user.password), salt);
     const [result] = await connection.query("INSERT INTO users(name,email,password) values(?,?,?)", [user.name, user.email, user.password]);

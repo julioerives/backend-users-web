@@ -9,13 +9,13 @@ import { PoolConnection } from "mysql2/promise";
 import { addUserService, deleteUserService, getUsersService } from "../services/user.service";
 import { ZodError } from "zod";
 import { userSchema } from "../schemas/user.schema";
+import { ResourceExistsException } from "../exceptions/ResourceExistsException";
 
 export const insertUserController = async (req: Request, res: Response) => {
     let connection!: PoolConnection;
     try {
         connection = await getConnection();
         const user: User = req.body;
-        console.log("🚀 ~ insertUserController ~ user:", user)
         userSchema.parse(user);
         await addUserService(user, connection)
         res.status(201).json(correctResponse<User>(POST_MESSAGE, user));
@@ -23,6 +23,10 @@ export const insertUserController = async (req: Request, res: Response) => {
         console.log("🚀 ~ insertUser ~ error:", error)
         if (error instanceof ZodError) {
             res.status(400).json(errorResponse(error.message))
+            return
+        }
+        if (error instanceof ResourceExistsException){
+            res.status(409).json(errorResponse(error.message))
             return
         }
         res.status(500).json(errorResponse(DEFAULT_ERROR_RESPONSE));
