@@ -34,3 +34,7 @@ export const deleteUserService = async (connection: PoolConnection, id: string) 
     const [result] = await connection.query("DELETE FROM users WHERE id_user =?", [id]);
     return result;
 }
+export const deactivateUserService = async (connection: PoolConnection, id: string) => {
+    const [result] = await connection.query("UPDATE users SET active = 0 WHERE id_user =?", [id]);
+    return result;
+}

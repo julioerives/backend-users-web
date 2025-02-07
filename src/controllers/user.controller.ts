@@ -6,7 +6,7 @@ import { errorResponse } from "../helpers/responses/errorResponse";
 import { DATA_NOT_FOUND, DEFAULT_ERROR_RESPONSE } from "../helpers/constants/errorResponse";
 import { getConnection } from "../database/database";
 import { PoolConnection } from "mysql2/promise";
-import { addUserService, deleteUserService, getUsersService } from "../services/user.service";
+import { addUserService, deleteUserService, getUsersService,deactivateUserService } from "../services/user.service";
 import { ZodError } from "zod";
 import { userSchema } from "../schemas/user.schema";
 import { ResourceExistsException } from "../exceptions/ResourceExistsException";
@@ -66,6 +66,24 @@ export const deleteUserController = async(req:Request, res:Response)=>{
         res.status(204).json(correctResponse("Registro eliminado correctamente", null));
     } catch (error: any) {
         console.log("🚀 ~ deleteUserController ~ error:", error)
+        res.status(500).json(errorResponse(DEFAULT_ERROR_RESPONSE))
+    } finally {
+        connection?.release()
+    }
+}
+export const deactivateUserController = async(req:Request, res:Response) =>{
+    let connection!: PoolConnection;
+    try {
+        connection = await getConnection();
+        const id_user:string = req.params.id ;
+        if (!id_user) {
+            res.status(400).json(errorResponse("El id es requerido"));
+            return;
+        }
+        await deactivateUserService(connection,id_user)
+        res.status(204).json(correctResponse("Registro desactivado correctamente", null));
+    } catch (error: any) {
+        console.log("🚀 ~ desactiveUserController ~ error:", error)
         res.status(500).json(errorResponse(DEFAULT_ERROR_RESPONSE))
     } finally {
         connection?.release()
