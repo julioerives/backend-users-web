@@ -3,9 +3,9 @@ import { User } from "../models/user.model";
 import { correctResponse } from "../helpers/responses/correctResponse";
 import { GET_MESSAGE, POST_MESSAGE } from "../helpers/constants/correctResponses";
 import { errorResponse } from "../helpers/responses/errorResponse";
-import { DATA_NOT_FOUND, DEFAULT_ERROR_RESPONSE } from "../helpers/constants/errorResponse";
+import { DATA_NOT_FOUND, DEFAULT_ERROR_RESPONSE, USER_NOT_EXISTS } from "../helpers/constants/errorResponse";
 import { getConnection } from "../database/database";
-import { PoolConnection } from "mysql2/promise";
+import { PoolConnection, QueryResult } from "mysql2/promise";
 import { addUserService, deleteUserService, getUsersService,deactivateUserService } from "../services/user.service";
 import { ZodError } from "zod";
 import { userSchema } from "../schemas/user.schema";
@@ -62,7 +62,11 @@ export const deleteUserController = async(req:Request, res:Response)=>{
             res.status(400).json(errorResponse("El id es requerido"));
             return;
         }
-        await deleteUserService(connection,id_user)
+        const result:QueryResult = await deleteUserService(connection,id_user);
+        if(result.affectedRows <1){
+            res.status(404).json(errorResponse(USER_NOT_EXISTS));
+            return;
+        }
         res.status(204).json(correctResponse("Registro eliminado correctamente", null));
     } catch (error: any) {
         console.log("🚀 ~ deleteUserController ~ error:", error)
@@ -80,7 +84,12 @@ export const deactivateUserController = async(req:Request, res:Response) =>{
             res.status(400).json(errorResponse("El id es requerido"));
             return;
         }
-        await deactivateUserService(connection,id_user)
+        const result:QueryResult = await deactivateUserService(connection,id_user)
+        if(result.affectedRows <1){
+            res.status(404).json(errorResponse(USER_NOT_EXISTS));
+            return;
+        }
+        
         res.status(204).json(correctResponse("Registro desactivado correctamente", null));
     } catch (error: any) {
         console.log("🚀 ~ desactiveUserController ~ error:", error)

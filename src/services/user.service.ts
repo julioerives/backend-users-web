@@ -1,13 +1,12 @@
-import { PoolConnection } from "mysql2/promise";
+import { FieldPacket, PoolConnection, RowDataPacket } from "mysql2/promise";
 import { User } from "../models/user.model";
 import bcrypt from "bcrypt"
 import { ResourceExistsException } from "../exceptions/ResourceExistsException";
 import { EMAIL_EXISTS } from "../helpers/constants/errorResponse";
-
+import { ResultSetHeader } from "mysql2/promise";
 export const addUserService = async (user: User, connection: PoolConnection) => {
-    const [email] = await connection.query("SELECT email FROM users WHERE email = ?", [user.email])
-    console.log("🚀 ~ addUserService ~ email:", email)
-    if (email) {
+    const [rows, fields]: [RowDataPacket[], FieldPacket[]] = await connection.query("SELECT email FROM users WHERE email = ?", [user.email])
+    if (rows.length) {
         throw new ResourceExistsException(EMAIL_EXISTS)
     }
     const salt = await bcrypt.genSalt(10);
@@ -31,10 +30,10 @@ export const getUsersService = async (connection: PoolConnection) => {
     return result;
 }
 export const deleteUserService = async (connection: PoolConnection, id: string) => {
-    const [result] = await connection.query("DELETE FROM users WHERE id_user =?", [id]);
+    const [result] = await connection.query<ResultSetHeader>("DELETE FROM users WHERE id_user =?", [id]);
     return result;
 }
-export const deactivateUserService = async (connection: PoolConnection, id: string) => {
-    const [result] = await connection.query("UPDATE users SET active = 0 WHERE id_user =?", [id]);
+export const deactivateUserService = async (connection: PoolConnection, id: string):Promise<ResultSetHeader> => {
+    const [result] = await connection.query<ResultSetHeader>("UPDATE users SET active = 0 WHERE id_user =?", [id]);
     return result;
 }
