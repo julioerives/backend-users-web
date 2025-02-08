@@ -2,8 +2,9 @@ import { FieldPacket, PoolConnection, RowDataPacket } from "mysql2/promise";
 import { User } from "../models/user.model";
 import bcrypt from "bcrypt"
 import { ResourceExistsException } from "../exceptions/ResourceExistsException";
-import { EMAIL_EXISTS } from "../helpers/constants/errorResponse";
+import { EMAIL_EXISTS, USER_NOT_EXISTS } from "../helpers/constants/errorResponse";
 import { ResultSetHeader } from "mysql2/promise";
+import { ResourceNotFound } from "../exceptions/resourceNotFoundException";
 export const addUserService = async (user: User, connection: PoolConnection) => {
     const [rows, fields]: [RowDataPacket[], FieldPacket[]] = await connection.query("SELECT email FROM users WHERE email = ?", [user.email])
     if (rows.length) {
@@ -36,4 +37,13 @@ export const deleteUserService = async (connection: PoolConnection, id: string) 
 export const deactivateUserService = async (connection: PoolConnection, id: string):Promise<ResultSetHeader> => {
     const [result] = await connection.query<ResultSetHeader>("UPDATE users SET active = 0 WHERE id_user =?", [id]);
     return result;
+}
+export const updateUserService = async (connection: PoolConnection, user: User) => {
+    const [rows, fields]: [RowDataPacket[], FieldPacket[]] = await connection.query("SELECT id_user FROM users WHERE id_user = ?",[user.id_user]);
+    if(rows.length <1){
+        throw new ResourceNotFound(USER_NOT_EXISTS)
+    }
+    const [rows2, fields2]: [RowDataPacket[], FieldPacket[]] = await connection.query("UPDATE users SET name = ?, email = ? WHERE id_user = ?",[user.name,user.email,user.id_user]);
+    return rows2;
+     
 }
