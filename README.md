@@ -1,4 +1,4 @@
-## **What is this?
+## What is this?
 this is a easy user crud with express, ts and mysql for database
 
 ## **How to run the application**     
