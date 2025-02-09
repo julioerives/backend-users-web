@@ -1,6 +1,6 @@
 import { PoolConnection } from "mysql2/promise";
 import { User } from "../models/user.model";
-import bcrypt from "bcrypt"
+import bcrypt from 'bcrypt';
 import { ResourceNotFound } from "../exceptions/resourceNotFoundException";
 import { USER_NOT_EXISTS } from "../helpers/constants/errorResponse";
 import { PasswordMismatchError } from "../exceptions/passwordMismatchException";
