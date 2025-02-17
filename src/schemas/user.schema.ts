@@ -10,6 +10,11 @@ export const userSchema = z.object({
     }).max(50, {
         message: "El nombre no puede tener más de 50 caracteres"
     }),
+    password:z.string({
+        required_error: "La contraseña es requerida",
+      }).min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
+        .regex(/[A-Z]/, { message: "La contraseña debe incluir al menos una letra mayúscula" })
+        .regex(/\d/, { message: "La contraseña debe incluir al menos un número" }),
     email: z.string().email({
         message: "EL correo debe de ser un correo valido",
     }),
